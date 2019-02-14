@@ -1,62 +1,109 @@
-// 将函数转成类的过程
-/**
- * 1. 创建一个类为Clock，继承于 React.Component
- * 2. 创建一个render方法，返回react的对象
- * 3. 在render中将props.date替换成 this.state.date
- * 4. 在类的原型上添加一个方法 this.state = {date: new Date()}
- * 5. 渲染数据，移除组件身上的date属性
- */
-
-// // 将生命周期方法添加到类中步骤
-/**
- * 1. 声明两个生命周期函数 componentDidMount 和 componentWillUnmount
- * 2. 在componentDidMount生命周期函数中，设置一个定时器，在定时器中调用了类的tick方法
- * 3. 声明一个tick的方法，在方法中更新当前state中的date属性值
- * 4. 在componentWillUnmount中清除定时器
- */
-
-// 导入
-import React from 'react'
+// 评论列表案例
+import React, { Component } from 'react'
 import ReactDom from 'react-dom'
-import { setInterval } from 'timers'
 
-// 创建类的组件
-class Clock extends React.Component {
-  // 在原型上添加方法
-  constructor(props) {
-    super(props)
-    this.state = { date: new Date() }
+// 创建类组件
+class Demo extends Component {
+  state = {
+    list: [
+      { id: 1, name: '常杰', content: '我感冒了，有点难受' },
+      { id: 2, name: '李想', content: '常杰，感冒好点了没' },
+      { id: 3, name: '丁申阳', content: '听李想说，常杰感冒了' }
+    ],
+    name: '',
+    content: ''
   }
-  // 渲染
   render() {
-    // 返回的是react的对象
+    // 先获取数组
+    let list = this.state.list.map(item => (
+      <li key={item.id}>
+        <h3>{item.name}</h3>
+        <p>{item.content}</p>
+        <button onClick={this.del.bind(this, item.id)}>X</button>
+      </li>
+    ))
+    //渲染数据
     return (
       <div>
-        <h1>当前的时间为：</h1>
-        <p>{this.state.date.toLocaleTimeString()}</p>
+        <h1>像介样</h1>
+        <form>
+          <p>
+            <input
+              type="text"
+              value={this.state.name}
+              placeholder="请输入您的名称"
+              onChange={this.changeName}
+            />
+          </p>
+          <div>
+            <textarea
+              value={this.state.content}
+              onChange={this.changeContent}
+              cols="30"
+              rows="10"
+              placeholder="请输入您评论的内容"
+            />
+          </div>
+          <button onClick={this.addContent}>提交</button>
+        </form>
+        <ul>{list}</ul>
       </div>
     )
   }
-  // 创建生命周期函数
-  // 挂载Dom时调用
-  componentDidMount() {
-    // 创建定时器
-    this.timerId = setInterval(() => this.tick(), 1000)
-  }
-
-  // 卸载Dom时调用
-  componentWillUnmount() {
-    // 清除定时器
-    clearInterval(this.timerId)
-  }
-
-  // tick是更新state中date的方法
-  tick() {
+  // 注册删除事件
+  del(id) {
+    // console.log('删除的数据的id为：', id)
+    // 获取删除数据的索引
+    let index = this.state.list.findIndex(item => item.id === id)
+    // console.log('索引号为：', index)
+    // 删除指定的数据
+    /**
+     * 1. 先将数据保存一份
+     * 2. 操作备份的数据
+     * 3. 将备份数据同步到state中
+     */
+    let list = [...this.state.list]
+    list.splice(index, 1)
     this.setState({
-      date: new Date()
+      list
+    })
+    // console.log('list：', list)
+  }
+  // 注册添加评论事件
+  addContent = e => {
+    // 阻止默认行为
+    e.preventDefault()
+
+    // 获取输入框的值
+    let { name, content } = this.state
+    console.log(name, content)
+    // 声明一个新的对象
+    let newData = {
+      id: +new Date(),
+      name,
+      content
+    }
+    // 将数据添加到数组中更新到到state中
+    this.setState({
+      list: [newData, ...this.state.list]
+    })
+  }
+  // 输入评论人姓名
+  changeName = e => {
+    console.log('评论人姓名：', e.target.value)
+    this.setState({
+      name: e.target.value
+    })
+  }
+  //输入评论内容
+  changeContent = e => {
+    // console.log('评论的内容：', e.target.value)
+    // console.log('this', this)
+    this.setState({
+      content: e.target.value
     })
   }
 }
 
-//渲染
-ReactDom.render(<Clock />, document.getElementById('root'))
+// 渲染数据
+ReactDom.render(<Demo />, document.getElementById('root'))
