@@ -1,11 +1,22 @@
+// Props传值的类型检查
+
 // 导入
-import React from 'react'
+import React, { Component } from 'react'
 import ReactDom from 'react-dom'
 
-// 导入样式
-import './index.css'
+// 导入Demo
+import Demo from './Demo'
 
-// 导入comment
-import Comment from './components/Comment'
+// 创建Father组件
+class Father extends Component {
+  render() {
+    return (
+      <div>
+        我是父组件
+        <Demo text="哈哈哈" />
+      </div>
+    )
+  }
+}
 
-ReactDom.render(<Comment />, document.getElementById('root'))
+ReactDom.render(<Father />, document.getElementById('root'))
