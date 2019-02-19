@@ -23,11 +23,16 @@ const { Header, Content, Footer } = Layout
 
 // 导航菜单
 let NavMenu = withRouter(({ location }) => {
+  let key = location.pathname
+  if (key.startsWith('/movie')) {
+    key = '/movie'
+  }
+  // console.log('key:', key)
   return (
     <Menu
       theme="dark"
       mode="horizontal"
-      defaultSelectedKeys={[location.pathname]}
+      selectedKeys={[key]}
       style={{ lineHeight: '64px' }}
     >
       <Menu.Item key="/">
@@ -36,7 +41,7 @@ let NavMenu = withRouter(({ location }) => {
         </NavLink>
       </Menu.Item>
       <Menu.Item key="/movie">
-        <NavLink to="/movie">电影列表</NavLink>
+        <NavLink to="/movie/in_theaters">电影列表</NavLink>
       </Menu.Item>
       <Menu.Item key="/about">
         <NavLink to="/about">关于</NavLink>
@@ -57,7 +62,7 @@ class App extends Component {
             <div className="logo" />
             <NavMenu />
           </Header>
-          <Content style={{ padding: '0 50px' }}>
+          <Content>
             <Switch>
               <Route exact path="/" component={Home} />
               <Route path="/movie" component={Movie} />
